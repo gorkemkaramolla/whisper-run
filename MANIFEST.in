@@ -1,0 +1,9 @@
+include README.md
+include LICENSE
+include requirements.txt
+recursive-include src/whisper_run *.py
+recursive-include src/whisper_run/data *
+recursive-include docs *
+global-include *.txt
+global-exclude *.pyc
+prune tests
