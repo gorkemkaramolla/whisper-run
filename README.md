@@ -26,7 +26,7 @@ pip install whisper-run
 You can call Whisper-Run from the command line using the following syntax:
 
 ```bash
-whisper_run --file_path=<file_path>
+whisper-run --file_path=<file_path>
 ```
 
 ### Example
@@ -34,7 +34,7 @@ whisper_run --file_path=<file_path>
 To process an audio file using the CPU and a specific file path:
 
 ```bash
-whisper_run --device=cpu --file_path=test.wav
+whisper-run --device=cpu --file_path=your_file_path
 ```
 
 When you run the command, you'll be prompted to select a model for audio processing:
@@ -73,7 +73,8 @@ You can also use Whisper-Run programmatically in your Python scripts. Below is a
 from whisper_run import AudioProcessor
 
 def main():
-    processor = AudioProcessor("test.wav", "cpu",
+    processor = AudioProcessor(file_path="your_file_path",
+                               device="cpu",
                                model_name="large-v3",
                                hf_auth_token="your_hf_token",
                                save=True)
