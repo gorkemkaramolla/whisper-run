@@ -4,15 +4,6 @@ Whisper-Run is a pip CLI tool for processing audio files using Whisper models wi
 
 It uses the OpenAI-Whisper model implementation from [OpenAI Whisper](https://github.com/openai/whisper), based on the ctranslate2 library from [faster-whisper](https://github.com/SYSTRAN/faster-whisper), and [pyannote's speaker-diarization-3.1](https://huggingface.co/pyannote/speaker-diarization-3.1). Check their documentation if needed.
 
-## Before You Start
-
-You must confirm the licensing permissions of these two models:
-
-- [pyannote/speaker-diarization-3.1](https://huggingface.co/pyannote/speaker-diarization-3.1)
-- [pyannote/segmentation-3.0](https://huggingface.co/pyannote/segmentation-3.0)
-
-From [Hugging Face](https://huggingface.co), get your Hugging Face auth token. You can put the token in your env file or pass it to the CLI as `--hf_auth_token`.
-
 ## Installation
 
 To install Whisper-Run, run the following command:
@@ -57,11 +48,6 @@ When you run the command, you'll be prompted to select a model for audio process
 - `--device`: Specify the device to use for processing (e.g., `cpu` or `cuda`).
 - `--file_path`: Specify the path to the audio file you want to process.
 - `--hf_auth_token`: Optional. Pass the Hugging Face Auth Token or set the `HF_AUTH_TOKEN` environment variable.
-- `--save`: Optional. If set, the results will be saved to a JSON file.
-
-### Output
-
-Results are printed to the terminal as a JSON object. If the `--save` flag is set, the results are also saved in the results directory as a JSON file. You can change the output format in the `audio_processor.py` file.
 
 ### Programmatic Usage
 
@@ -75,9 +61,8 @@ from whisper_run import AudioProcessor
 def main():
     processor = AudioProcessor(file_path="your_file_path",
                                device="cpu",
-                               model_name="large-v3",
-                               hf_auth_token="your_hf_token",
-                               save=True)
+                               model_name="large-v3"
+                               )
     processor.process()
 
 if __name__ == "__main__":
