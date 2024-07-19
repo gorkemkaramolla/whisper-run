@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.WARNING, format='%(levelname)s: %(message)s')
 
 def main():
     try:
-        args, hf_auth_token = parse_arguments()
+        args = parse_arguments()
     except ValueError as e:
         logging.error(e)
         return
@@ -32,7 +32,7 @@ def main():
     file_path = args.file_path
     device = args.device
 
-    processor = AudioProcessor(file_path, device, hf_auth_token, model)
+    processor = AudioProcessor(file_path, device, model)
     results = processor.process()
 
     results_json = json.dumps(results, indent=4)

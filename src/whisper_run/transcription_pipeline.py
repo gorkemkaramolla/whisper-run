@@ -27,5 +27,3 @@ class TranscriptionPipeline:
         print(f"Transcription JSON preparation {transcription_json_total:.2f} seconds")
 
         return transcription_result
-
-
