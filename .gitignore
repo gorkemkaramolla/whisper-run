@@ -17,3 +17,5 @@ dist
 build
 src/whisper_run.egg-info
 test2
+src/whisper_run/cli.pyvenv
+__pycache__
