@@ -7,7 +7,11 @@ from whisper_run.utils import measure_time
 
 
 class DiarizationPipeline:
-    def __init__(self, device: str = "cpu", show_progress: bool = False) -> None:
+    def __init__(
+        self,
+        device: str = "cuda" if torch.cuda.is_available() else "cpu",
+        show_progress: bool = False,
+    ) -> None:
         self.pipeline = PyannoteONNX(show_progress=show_progress)
         self.device = torch.device(device)
         if device != "cpu" and not torch.cuda.is_available():
@@ -16,36 +20,32 @@ class DiarizationPipeline:
             raise ValueError(
                 "PyannoteONNX models are not typically moved to GPU. They run efficiently on CPU."
             )
+        print(f"Using device: {self.device}")
 
     def run(self, file_path: str) -> List[Dict[str, float]]:
-        print(f"Device: {self.device}")
+        start_time = time.time()
 
-        def process_audio(file_path: str) -> List[Dict[str, float]]:
-            audio, sample_rate = librosa.load(
-                file_path, sr=self.pipeline.sample_rate, mono=True
+        # Load audio file
+        audio, sample_rate = librosa.load(
+            file_path, sr=self.pipeline.sample_rate, mono=True
+        )
+        print(f"Audio shape after loading: {audio.shape}")
+
+        # Process the audio with PyannoteONNX
+        # PyannoteONNX expects numpy array, so we keep it as is
+        diarization_results = list(self.pipeline.itertracks(audio))
+
+        # Convert results to the desired format
+        segments = []
+        for result in diarization_results:
+            segments.append(
+                {
+                    "start": result["start"],
+                    "end": result["stop"],
+                    "speaker": f"SPEAKER_{result['speaker']:02d}",
+                }
             )
 
-            # Process the audio with PyannoteONNX
-            diarization_results = list(self.pipeline.itertracks(audio))
-            # Convert results to the desired format
-            segments = []
-            with tqdm(
-                total=len(diarization_results),
-                desc="Diarization Progress",
-                unit="segment",
-            ) as pbar:
-                for result in diarization_results:
-                    segments.append(
-                        {
-                            "start": result["start"],
-                            "end": result["stop"],
-                            "speaker": f"{result['speaker']:02d}",
-                        }
-                    )
-                    pbar.update(1)
-
-            return segments
-
-        segments, elapsed_time = measure_time(process_audio, file_path)
+        elapsed_time = time.time() - start_time
         print(f"Diarization completed in {elapsed_time:.2f} seconds")
         return segments

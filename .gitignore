@@ -19,4 +19,5 @@ src/whisper_run.egg-info
 test2
 src/whisper_run/cli.pyvenv
 __pycache__
+src/whisper_run/large-v3
 /audios
