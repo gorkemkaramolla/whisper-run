@@ -10,7 +10,7 @@ def load_requirements(file_path: str):
 
 setup(
     name='whisper-run',
-    version='1.2.2',
+    version='1.2.3',
     author='Görkem Karamolla',
     author_email='gorkemkaramolla@gmail.com',
     description='Whisper with speaker diarization',
