@@ -11,9 +11,6 @@ def init_session(model_path):
 
 
 class PickableInferenceSession:
-    """
-    This is a wrapper to make the current InferenceSession class pickable.
-    """
 
     def __init__(self, model_path):
         self.model_path = model_path
