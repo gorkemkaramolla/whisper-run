@@ -1,5 +1,5 @@
 import time
-import json  # Import json module to parse JSON string
+import json
 from typing import List, Dict
 from .audio_converter import AudioConverter
 from .diarization_pipeline import DiarizationPipeline
@@ -30,7 +30,6 @@ class AudioProcessor:
         )
         transcription_json = transcription_pipeline.run(self.file_path)
 
-        # Parse the JSON string to get the list of transcription segments
         transcription_segments = json.loads(transcription_json)
 
         if diarization_segments:
@@ -44,7 +43,7 @@ class AudioProcessor:
                         diarization_segments,
                         key=lambda x: min(
                             abs(x["start"] - segment["start"]),
-                            abs(x["end"] - segment["end"]),
+                            abs(x["stop"] - segment["end"]),
                         ),
                     )
                     segment["speaker"] = (
