@@ -7,19 +7,6 @@ import multiprocessing
 import time
 
 
-class Segment(NamedTuple):
-    start: float
-    end: float
-    text: str
-    seek: int
-    id: int
-    temperature: float
-    avg_logprob: float
-    compression_ratio: float
-    no_speech_prob: float
-    words: Any
-
-
 def prepare_segment(segment) -> Dict[str, Any]:
     segment_dict = segment._asdict()
     segment_dict.pop("tokens", None)
@@ -36,11 +23,17 @@ class TranscriptionPipeline:
         print(f"Initializing WhisperModel on device: {self.device}")
         self.model = WhisperModel(model_size, device=self.device, compute_type="int8")
 
-    def run(self, file_path: str) -> str:
+    def run(self, file_path: str, beam_size: int = 5, **kwargs) -> str:
+        """Run the transcription process."""
         print("Starting transcription process...")
         start_time = time.time()
 
-        segments, info = self.model.transcribe(file_path, beam_size=5)
+        # Pass the additional parameters using **kwargs
+        segments, info = self.model.transcribe(file_path, beam_size, **kwargs)
+
+        # for segment in segments:
+        #     print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
+
         segments_list = list(segments)
 
         if not segments_list:
@@ -68,6 +61,6 @@ class TranscriptionPipeline:
         )
 
         json_string, encoding_runtime = measure_time(orjson.dumps, transcription_result)
-        print(f"JSON encoding completed in {encoding_runtime:.2f} seconds")
+        # print(f"JSON encoding completed in {encoding_runtime:.2f} seconds")
 
         return json_string.decode("utf-8")
