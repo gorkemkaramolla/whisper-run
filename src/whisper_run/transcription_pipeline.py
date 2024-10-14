@@ -28,9 +28,9 @@ class TranscriptionPipeline:
         print("Starting transcription process...")
         start_time = time.time()
 
-        # Pass the additional parameters using **kwargs
         segments, info = self.model.transcribe(file_path, **kwargs)
 
+        # Output from faster-whisper
         # for segment in segments:
         #     print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
 
@@ -61,6 +61,6 @@ class TranscriptionPipeline:
         )
 
         json_string, encoding_runtime = measure_time(orjson.dumps, transcription_result)
-        # print(f"JSON encoding completed in {encoding_runtime:.2f} seconds")
+        print(f"JSON encoding completed in {encoding_runtime:.2f} seconds")
 
         return json_string.decode("utf-8")
