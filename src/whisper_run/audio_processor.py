@@ -1,38 +1,55 @@
 import time
 import json
-from typing import List, Dict
+from typing import List, Dict, Optional
 from .audio_converter import AudioConverter
 from .diarization_pipeline import DiarizationPipeline
 from .transcription_pipeline import TranscriptionPipeline
 
 
 class AudioProcessor:
-    def __init__(self, file_path: str, device: str, model_name: str) -> None:
+    def __init__(
+        self,
+        file_path: str,
+        device: str,
+        model_name: str,
+        diarization: bool = True,  # Add diarization flag
+        **kwargs,
+    ) -> None:
         self.file_path = file_path
         self.device = device
-        self.pyannote_model_name = "./segmentation-3.0.onnx"
+        self.diarization = diarization  # Store diarization preference
         self.whisper_model_name = model_name
+
+        # Store transcription parameters (kwargs)
+        self.transcription_params = kwargs
 
     def process(self) -> Dict[str, List[Dict[str, float]]]:
         total_start_time = time.time()
 
+        # Convert to WAV format
         self.file_path = AudioConverter.convert_to_wav(self.file_path)
 
-        print("Starting diarization process...")
-        diarization_pipeline = DiarizationPipeline(self.device)
-        diarization_segments = diarization_pipeline.run(self.file_path)
-        if not diarization_segments:
-            print("No diarization segments found.")
+        diarization_segments = None
 
+        # Diarization Process (only if diarization=True)
+        if self.diarization:
+            print("Starting diarization process...")
+            diarization_pipeline = DiarizationPipeline(self.device)
+            diarization_segments = diarization_pipeline.run(self.file_path)
+
+        # Transcription Process
         print("Starting transcription process...")
         transcription_pipeline = TranscriptionPipeline(
             self.whisper_model_name, self.device
         )
-        transcription_json = transcription_pipeline.run(self.file_path)
+        transcription_json = transcription_pipeline.run(
+            self.file_path, **self.transcription_params  # Pass kwargs here
+        )
 
         transcription_segments = json.loads(transcription_json)
 
-        if diarization_segments:
+        # Match diarization segments with transcription segments (only if diarization=True)
+        if self.diarization and diarization_segments:
             for segment in transcription_segments:
                 if (
                     isinstance(segment, dict)
