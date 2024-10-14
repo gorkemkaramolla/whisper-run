@@ -4,10 +4,18 @@ from whisper_run import AudioProcessor
 
 def main():
     model_dir = os.path.join(os.path.dirname(__file__), "large-v3/")
+
     processor = AudioProcessor(
-        file_path="../../audios/short.wav", device="cpu", model_name="large-v3"
+        file_path="../../audios/test.wav",
+        device="cpu",
+        model_name="large-v3",
+        language="tr",
+        diarization=True,
     )
-    print(processor.process())
+
+    # Process the audio file
+    result = processor.process()
+    print(result)
 
 
 if __name__ == "__main__":
