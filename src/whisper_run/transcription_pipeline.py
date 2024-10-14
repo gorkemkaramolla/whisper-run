@@ -23,13 +23,13 @@ class TranscriptionPipeline:
         print(f"Initializing WhisperModel on device: {self.device}")
         self.model = WhisperModel(model_size, device=self.device, compute_type="int8")
 
-    def run(self, file_path: str, beam_size: int = 5, **kwargs) -> str:
+    def run(self, file_path: str, **kwargs) -> str:
         """Run the transcription process."""
         print("Starting transcription process...")
         start_time = time.time()
 
         # Pass the additional parameters using **kwargs
-        segments, info = self.model.transcribe(file_path, beam_size, **kwargs)
+        segments, info = self.model.transcribe(file_path, **kwargs)
 
         # for segment in segments:
         #     print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
